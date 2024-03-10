@@ -1,0 +1,14 @@
+server:
+  port: 8000
+
+spring:
+  datasource:
+    url: jdbc:postgresql://localhost:5432/postgres?currentSchema=test_task
+    username: postgres
+    password: qwerty
+  jpa:
+    hibernate:
+      ddl-auto: update
+
+testing.app.secret: ${dk46sdf65ob0nb366gd}
+testing.app.lifetime: ${60000}
