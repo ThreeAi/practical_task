@@ -10,5 +10,6 @@ spring:
     hibernate:
       ddl-auto: update
 
-testing.app.secret: ${dk46sdf65ob0nb366gd}
-testing.app.lifetime: ${60000}
+jwt:
+  secret: 984hg493gh0439rthr0429uruj2309yh937gc763fe87t3f89723gf
+  lifetime: 10000

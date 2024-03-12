@@ -24,7 +24,7 @@ public class User implements UserDetails {
     private String email;
     @Column(name = "username")
     private String userName;
-    @Column(name = "password", length = 1000)
+    @Column(name = "password")
     private String password;
     @ElementCollection(targetClass = Role.class, fetch = FetchType.EAGER)
     @CollectionTable(name = "user_role",
