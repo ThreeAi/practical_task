@@ -5,11 +5,17 @@ spring:
   datasource:
     url: jdbc:postgresql://localhost:5432/postgres?currentSchema=test_task
     username: postgres
-    password: qwerty
+    password: postgres
   jpa:
     hibernate:
       ddl-auto: update
+    show-sql: true
 
 jwt:
   secret: 984hg493gh0439rthr0429uruj2309yh937gc763fe87t3f89723gf
-  lifetime: 10000
+  lifetime: 100000
+
+admin:
+  email: example@email.com
+  password: admin
+  username: admin

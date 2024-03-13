@@ -4,8 +4,10 @@ import com.practical.task.DTO.JwtRequest;
 import com.practical.task.DTO.JwtResponse;
 import com.practical.task.configurations.utils.JwtTokenUtils;
 import com.practical.task.exceptions.AppError;
+import com.practical.task.models.User;
 import com.practical.task.services.UserService;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.authentication.AuthenticationManager;
@@ -18,6 +20,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 @RestController
 @RequiredArgsConstructor
+@Slf4j
 public class AuthController {
 
     private final UserService userService;
@@ -32,6 +35,7 @@ public class AuthController {
             return new ResponseEntity<>(new AppError(HttpStatus.UNAUTHORIZED.value(), "Не правильный логин или пароль"), HttpStatus.UNAUTHORIZED);
         }
         UserDetails userDetails = userService.loadUserByUsername(authRequest.username());
+        log.info(userDetails.getAuthorities().toString());
         String token = jwtTokenUtils.generateToken(userDetails);
         return ResponseEntity.ok(new JwtResponse(token));
     }
