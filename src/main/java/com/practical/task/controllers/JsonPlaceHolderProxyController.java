@@ -1,9 +1,8 @@
 package com.practical.task.controllers;
 
+import com.practical.task.configurations.Audit;
 import jakarta.servlet.http.HttpServletRequest;
 import lombok.RequiredArgsConstructor;
-import lombok.extern.slf4j.Slf4j;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpMethod;
 import org.springframework.http.ResponseEntity;
@@ -13,44 +12,48 @@ import org.springframework.web.client.RestTemplate;
 @RestController
 @RequestMapping("/api")
 @RequiredArgsConstructor
-@Slf4j
 public class JsonPlaceHolderProxyController {
 
     private static final String JSON_PLACEHOLDER_BASE_URL = "https://jsonplaceholder.typicode.com";
-    @Autowired
-    private RestTemplate restTemplate;
+    private final RestTemplate restTemplate;
 
-    @GetMapping("/posts/**")
-    public ResponseEntity<Object> getPost(HttpServletRequest request) {
-        String requestUri = request.getRequestURI();
-        String url = JSON_PLACEHOLDER_BASE_URL + requestUri.replace("/api", "");
-        ResponseEntity<Object> response = restTemplate.exchange(url, HttpMethod.GET, HttpEntity.EMPTY, Object.class);
-        return ResponseEntity.status(response.getStatusCode()).body(response.getBody());
+    @Audit
+    @RequestMapping(method = {RequestMethod.GET, RequestMethod.DELETE}, path = "/posts/**")
+    public ResponseEntity<Object> handleGetDeletePostsRequest(HttpServletRequest request) {
+        return handleRequest(request, null);
     }
 
-    @PostMapping("/posts/**")
-    public ResponseEntity<Object> createPost(HttpServletRequest request, @RequestBody Object post) {
-        String requestUri = request.getRequestURI();
-        String url = JSON_PLACEHOLDER_BASE_URL + requestUri.replace("/api", "");
-        HttpEntity<Object> requestEntity = new HttpEntity<>(post);
-        ResponseEntity<Object> response = restTemplate.exchange(url, HttpMethod.POST, requestEntity, Object.class);
-        return ResponseEntity.status(response.getStatusCode()).body(response.getBody());
+    @Audit
+    @RequestMapping(method = {RequestMethod.POST, RequestMethod.PUT}, path = "/posts/**")
+    public ResponseEntity<Object> handlePostPutPostsRequest(HttpServletRequest request, @RequestBody Object body) {
+        return handleRequest(request, body);
     }
 
-    @PutMapping("/posts/**")
-    public ResponseEntity<Object> updatePost(HttpServletRequest request, @RequestBody Object post) {
-        String requestUri = request.getRequestURI();
-        String url = JSON_PLACEHOLDER_BASE_URL + requestUri.replace("/api", "");
-        HttpEntity<Object> requestEntity = new HttpEntity<>(post);
-        ResponseEntity<Object> response = restTemplate.exchange(url, HttpMethod.PUT, requestEntity, Object.class);
-        return ResponseEntity.status(response.getStatusCode()).body(response.getBody());
+    @RequestMapping(method = {RequestMethod.GET, RequestMethod.DELETE}, path = "/users/**")
+    public ResponseEntity<Object> handleGetDeleteUsersRequest(HttpServletRequest request) {
+        return handleRequest(request, null);
     }
 
-    @DeleteMapping("/posts/**")
-    public ResponseEntity<Object> deletePost(HttpServletRequest request) {
+    @RequestMapping(method = {RequestMethod.POST, RequestMethod.PUT}, path = "/users/**")
+    public ResponseEntity<Object> handlePostPutUsersRequest(HttpServletRequest request, @RequestBody Object body) {
+        return handleRequest(request, body);
+    }
+
+    @RequestMapping(method = {RequestMethod.GET, RequestMethod.DELETE}, path = "/albums/**")
+    public ResponseEntity<Object> handleGetDeleteAlbumsRequest(HttpServletRequest request) {
+        return handleRequest(request, null);
+    }
+
+    @RequestMapping(method = {RequestMethod.POST, RequestMethod.PUT}, path = "/albums/**")
+    public ResponseEntity<Object> handlePostPutAlbumsRequest(HttpServletRequest request, @RequestBody Object body) {
+        return handleRequest(request, body);
+    }
+
+    private ResponseEntity<Object> handleRequest(HttpServletRequest request, Object body) {
         String requestUri = request.getRequestURI();
         String url = JSON_PLACEHOLDER_BASE_URL + requestUri.replace("/api", "");
-        ResponseEntity<Object> response = restTemplate.exchange(url, HttpMethod.DELETE, HttpEntity.EMPTY, Object.class);
+        HttpMethod httpMethod = HttpMethod.valueOf(request.getMethod());
+        ResponseEntity<Object> response = restTemplate.exchange(url, httpMethod, body == null ? HttpEntity.EMPTY : new HttpEntity<>(body) , Object.class);
         return ResponseEntity.status(response.getStatusCode()).body(response.getBody());
     }
 }

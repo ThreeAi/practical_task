@@ -37,9 +37,12 @@ public class SecurityConfig {
                 .sessionManagement(session -> session
                         .sessionCreationPolicy(SessionCreationPolicy.STATELESS))
                 .authorizeHttpRequests(authorize -> authorize
-                        .requestMatchers("/secured/**").authenticated()
+                        .requestMatchers("/auth").permitAll()
+                        .requestMatchers("/api/posts/**").hasAnyRole("ADMIN", "POSTS")
+                        .requestMatchers("/api/users/**").hasAnyRole("ADMIN", "USERS")
+                        .requestMatchers("/api/albums/**").hasAnyRole("ADMIN", "ALBUMS")
                         .requestMatchers("/admin/**").hasRole("ADMIN")
-                        .anyRequest().permitAll())
+                        .anyRequest().authenticated())
                 .exceptionHandling(exception -> exception
                         .authenticationEntryPoint(new HttpStatusEntryPoint(HttpStatus.UNAUTHORIZED)))
                 .addFilterBefore(jwtRequestFilter, UsernamePasswordAuthenticationFilter.class);

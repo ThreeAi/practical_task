@@ -1,9 +1,7 @@
 package com.practical.task.configurations;
 
-import com.practical.task.models.Role;
 import com.practical.task.models.User;
 import com.practical.task.models.enums.RoleType;
-import com.practical.task.repositories.RoleRepository;
 import com.practical.task.repositories.UserRepository;
 import com.practical.task.services.RoleService;
 import com.practical.task.services.UserService;
@@ -13,7 +11,8 @@ import org.springframework.boot.CommandLineRunner;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Component;
 
-import java.util.Set;
+import java.util.ArrayList;
+import java.util.List;
 
 @Component
 @RequiredArgsConstructor
@@ -43,6 +42,8 @@ public class DataLoader implements CommandLineRunner {
         user.setUserName(username);
         user.setEmail(email);
         user.setPassword(passwordEncoder.encode(password));
-        userService.createNewUser(user);
+        List<RoleType> roles = new ArrayList<>();
+        roles.add(RoleType.ROLE_ADMIN);
+        userService.createNewUser(user, roles);
     }
 }
